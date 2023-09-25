@@ -27,7 +27,8 @@ export class AuthService {
         delete user.hash;
         return user;
         //return 'I am signing up';
-    } catch(error) {
+    }
+    catch(error) {
         if (error instanceof PrismaClientKnownRequestError) {
             if (error.code === 'P2002') {
                 throw new ForbiddenException('Credentials Taken')
@@ -36,7 +37,27 @@ export class AuthService {
         throw error
         }
     }
-    signin() {
-        return 'I am signing in';
+    async signin(dto: AuthDto) {
+        // find user by email
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: dto.email,
+            },
+        });
+        if (!user)
+            throw new ForbiddenException(
+                'Credentials Incorrect',
+            );
+        // check if the user exists
+        // compare password
+        const pwMatches = await argon.verify(user.hash, dto.password);
+        // check if password is correct
+        if (!pwMatches)
+            throw new ForbiddenException(
+                'Crtedentials Incorrect'
+            );
+        // return user
+        delete user.hash;
+        return user;
     }
 }
