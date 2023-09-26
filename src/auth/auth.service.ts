@@ -15,26 +15,26 @@ export class AuthService {
         const hash = await argon.hash(dto.password);
         // save user in db
         try {const user = await this.prisma.user.create({
-            data: {
-                email: dto.email,
-                hash,
-            },
-            // to only return the fields you want to see:
-            // select: {
-            //     id: true,
-            //     email: true,
-            //     createdAt: true,
-            // }
-        });
-        return this.signToken(user.id, user.email);
-    }
-    catch(error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-            if (error.code === 'P2002') {
-                throw new ForbiddenException('Credentials Taken')
-            };
+                data: {
+                    email: dto.email,
+                    hash,
+                },
+                // to only return the fields you want to see:
+                // select: {
+                //     id: true,
+                //     email: true,
+                //     createdAt: true,
+                // }
+            });
+            return this.signToken(user.id, user.email);
         }
-        throw error
+        catch(error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    throw new ForbiddenException('Credentials Taken')
+                };
+            }
+            throw error;
         }
     }
 
