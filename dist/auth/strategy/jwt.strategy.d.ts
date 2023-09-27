@@ -1,6 +1,6 @@
 import { Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../../prisma/prisma.service";
 declare const jwtStrategy_base: new (...args: any[]) => Strategy;
 export declare class jwtStrategy extends jwtStrategy_base {
     private prisma;

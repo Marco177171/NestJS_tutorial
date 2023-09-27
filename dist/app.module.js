@@ -25,7 +25,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             bookmark_module_1.BookmarkModule,
-            prisma_module_1.PrismaModule
+            prisma_module_1.PrismaModule,
         ],
     })
 ], AppModule);
