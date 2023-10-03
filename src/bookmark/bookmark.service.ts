@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBookmarkDto, EditBookmarkDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -13,16 +13,54 @@ export class BookmarkService {
             },
         });
     }
-    getBookmarkById(userId: number, bookmarkId: number) {}
+    getBookmarkById(userId: number, bookmarkId: number) {
+        return this.prisma.bookmark.findFirst({
+            where: {
+                userId,
+                id: bookmarkId,
+            },
+        });
+    }
     async createBookmark(userId: number, dto: CreateBookmarkDto) {
         const bookmark = await this.prisma.bookmark.create({
             data: {
                 userId,
-                ...dto
+                ...dto,
             },
         });
         return bookmark;
     }
-    editBookMarkById(userId: number, bookmarkId: number, dto: EditBookmarkDto) {}
-    deleteBookmarkById(userId: number, bookmarkId: number) {}
+    async editBookMarkById(userId: number, bookmarkId: number, dto: EditBookmarkDto) {
+        // get bookmark by id
+        const bookmark = await this.prisma.bookmark.findUnique({
+            where: {
+                id: bookmarkId,
+            }
+        });
+        // if (!bookmark || bookmark.userId !== userId)
+        //     throw new ForbiddenException('Access Denied');
+        return this.prisma.bookmark.update({
+            where: {
+                id: bookmarkId,
+            },
+            data: {
+                ...dto,
+            },
+        });
+    }
+    async deleteBookmarkById(userId: number, bookmarkId: number) {
+        // get bookmark by id
+        const bookmark = await this.prisma.bookmark.findUnique({
+            where: {
+                id: bookmarkId,
+            }
+        });
+        // if (!bookmark || bookmark.userId !== userId)
+        //     throw new ForbiddenException('Access Denied');
+        await this.prisma.bookmark.delete({
+            where: {
+                id: bookmarkId,
+            },
+        });
+    }
 }

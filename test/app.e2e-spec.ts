@@ -6,6 +6,7 @@ import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
 import { CreateBookmarkDto } from '../src/bookmark/dto';
+import { EditBookmarkDto } from '../src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -105,20 +106,54 @@ describe('App e2e', () => {
       it('should create a bookmark', () => {
         return pactum.spec().post('http://localhost:3001/bookmarks').withHeaders({
           Authorization: 'Bearer $S{userAt}',
-        }).withBody(dto).expectStatus(201).inspect();
+        }).withBody(dto).expectStatus(201).stores('bookmarkId', 'id');
       });
     });
     describe('Get Bookmarks', () => {
-      
+      it('should get bookmarks', () => {
+        return pactum.spec().get('http://localhost:3001/bookmarks').withHeaders({
+          Authorization: 'Bearer $S{userAt}',
+        }).expectStatus(200).expectJsonLength(1);
+      });
     });
     describe('Get Bookmark By id', () => {
-
+      it('should get bookmark by id', () => {
+        return pactum.spec()
+        .get('http://localhost:3001/bookmarks/{id}')
+        .withPathParams('id', '$S{bookmarkId}')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAt}',
+        }).expectStatus(200).expectBodyContains('$S{bookmarkId}');
+      });
     });
-    describe('Edit Bookmark', () => {
-
+    describe('Edit Bookmark by id', () => {
+      const dto: EditBookmarkDto = {
+        title: 'This is a test title. It will replace the previous one',
+        description: 'This is a test description. It will replace the previous one',
+      }
+      it('should edit bookmark', () => {
+        return pactum.spec()
+        .patch('http://localhost:3001/bookmarks/{id}')
+        .withPathParams('id', '$S{bookmarkId}')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAt}',
+        }).withBody(dto).expectStatus(200).expectBodyContains(dto.title).expectBodyContains(dto.description);
+      });
     });
     describe('Delete Bookmark by id', () => {
-
+      it('should delete bookmark', () => {
+        return pactum.spec()
+        .delete('http://localhost:3001/bookmarks/{id}')
+        .withPathParams('id', '$S{bookmarkId}')
+        .withHeaders({
+          Authorization: 'Bearer $S{userAt}',
+        }).expectStatus(200);
+      });
+      it('should get bookmarks', () => {
+        return pactum.spec().get('http://localhost:3001/bookmarks').withHeaders({
+          Authorization: 'Bearer $S{userAt}',
+        }).expectStatus(200).expectJsonLength(0);
+      });
     });
   });
 });

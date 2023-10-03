@@ -23,15 +23,45 @@ let BookmarkService = class BookmarkService {
             },
         });
     }
-    getBookmarkById(userId, bookmarkId) { }
+    getBookmarkById(userId, bookmarkId) {
+        return this.prisma.bookmark.findFirst({
+            where: {
+                userId,
+                id: bookmarkId,
+            },
+        });
+    }
     async createBookmark(userId, dto) {
         const bookmark = await this.prisma.bookmark.create({
             data: Object.assign({ userId }, dto),
         });
         return bookmark;
     }
-    editBookMarkById(userId, bookmarkId, dto) { }
-    deleteBookmarkById(userId, bookmarkId) { }
+    async editBookMarkById(userId, bookmarkId, dto) {
+        const bookmark = await this.prisma.bookmark.findUnique({
+            where: {
+                id: bookmarkId,
+            }
+        });
+        return this.prisma.bookmark.update({
+            where: {
+                id: bookmarkId,
+            },
+            data: Object.assign({}, dto),
+        });
+    }
+    async deleteBookmarkById(userId, bookmarkId) {
+        const bookmark = await this.prisma.bookmark.findUnique({
+            where: {
+                id: bookmarkId,
+            }
+        });
+        await this.prisma.bookmark.delete({
+            where: {
+                id: bookmarkId,
+            },
+        });
+    }
 };
 exports.BookmarkService = BookmarkService;
 exports.BookmarkService = BookmarkService = __decorate([

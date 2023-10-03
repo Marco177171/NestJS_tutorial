@@ -26,16 +26,16 @@ let BookmarkController = class BookmarkController {
         return this.bookmarkService.getBookmarks(userId);
     }
     getBookmarkById(userId, bookmarkId) {
-        return this.getBookmarkById(userId, bookmarkId);
+        return this.bookmarkService.getBookmarkById(userId, bookmarkId);
     }
     createBookmark(userId, dto) {
-        return this.createBookmark(userId, dto);
+        return this.bookmarkService.createBookmark(userId, dto);
     }
     editBookMarkById(userId, bookmarkId, dto) {
-        return this.editBookMarkById(userId, bookmarkId, dto);
+        return this.bookmarkService.editBookMarkById(userId, bookmarkId, dto);
     }
     deleteBookmarkById(userId, bookmarkId) {
-        return this.deleteBookmarkById(userId, bookmarkId);
+        return this.bookmarkService.deleteBookmarkById(userId, bookmarkId);
     }
 };
 exports.BookmarkController = BookmarkController;
@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], BookmarkController.prototype, "createBookmark", null);
 __decorate([
-    (0, common_1.Patch)(),
+    (0, common_1.Patch)(':id'),
     __param(0, (0, decorator_1.GetUser)('id')),
     __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Body)()),
